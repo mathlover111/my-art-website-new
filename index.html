@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>我的作品集</title>
+
+<style>
+body{
+  background-image:url('images/background.jpg');
+  background-size:cover;
+  background-position:center;
+  font-family:Arial,sans-serif;
+  text-align:center;
+  color:rgb(9,115,214);
+  margin:0;
+}
+
+h1{
+  padding-top:50px;
+  text-shadow:2px 2px 5px rgba(0,0,0,0.7);
+}
+
+.gallery{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin:50px 0;
+}
+
+.gallery img{
+  width:200px;
+  margin:10px;
+  border-radius:8px;
+  box-shadow:2px 2px 5px rgba(0,0,0,0.5);
+  transition:0.3s;
+}
+
+.gallery img:hover{
+  transform:scale(1.05);
+}
+
+.comment-box{
+  margin:50px auto;
+  width:80%;
+  max-width:800px;
+}
+
+textarea{
+  width:100%;
+  height:80px;
+  border-radius:5px;
+  padding:10px;
+}
+
+#commentList{
+  position:fixed;
+  bottom:20px;
+  left:20px;
+  width:260px;
+  max-height:300px;
+  overflow-y:auto;
+  background:rgba(255,255,255,0.9);
+  padding:10px;
+  border-radius:10px;
+}
+
+#commentList p{
+  background:white;
+  padding:6px;
+  margin:6px 0;
+  border-radius:5px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:13px;
+}
+
+.delete-btn{
+  background:red;
+  color:white;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>我的畫畫作品 🎨</h1>
+
+<!-- 圖片區（從 Firebase 讀） -->
+<div class="gallery" id="gallery"></div>
+
+<div class="comment-box">
+  <h2>留言區</h2>
+
+  <textarea id="commentInput" placeholder="寫點評論吧～"></textarea>
+  <br><br>
+
+  <button onclick="addComment()">送出</button>
+  <button onclick="login()">Google 登入</button>
+
+  <div id="commentList"></div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCstAO_LlkU9hm1L2-1R1k8KpvPcnDuULI",
+  authDomain: "myprogram-476fd.firebaseapp.com",
+  databaseURL: "https://myprogram-476fd-default-rtdb.firebaseio.com",
+  projectId: "myprogram-476fd",
+  storageBucket: "myprogram-476fd.appspot.com",
+  messagingSenderId: "292155592104",
+  appId: "1:292155592104:web:45788da74aa7986b56e19d"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.database();
+let currentUser = null;
+const adminID = "PrQ5SswIOBWWRCAFU6pz8mTpVjp1";
+
+/* 登入 */
+function login(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+
+  firebase.auth().signInWithPopup(provider)
+  .then(res=>{
+    currentUser = res.user.uid;
+    loadComments();
+  });
+}
+
+/* 載入圖片（來自 Firebase → 實際圖片在 GitHub） */
+function loadImages(){
+  db.ref("images").on("child_added", snap=>{
+    const url = snap.val();
+
+    const img = document.createElement("img");
+    img.src = url;
+
+    document.getElementById("gallery").appendChild(img);
+  });
+}
+
+/* 載入留言 */
+function loadComments(){
+  db.ref("comments").on("child_added", snap=>{
+    const data = snap.val();
+    const id = snap.key;
+
+    const p = document.createElement("p");
+
+    const date = new Date(data.time);
+    const timeText =
+      date.getFullYear()+"/"+
+      (date.getMonth()+1)+"/"+
+      date.getDate()+" "+
+      date.getHours()+":"+
+      date.getMinutes();
+
+    p.textContent = data.name + "：" + data.text + " ("+timeText+")";
+
+    if(data.user === currentUser || currentUser === adminID){
+      const btn = document.createElement("button");
+      btn.textContent = "刪";
+      btn.className = "delete-btn";
+      btn.onclick = ()=> db.ref("comments/"+id).remove();
+      p.appendChild(btn);
+    }
+
+    document.getElementById("commentList").appendChild(p);
+  });
+}
+
+/* 新增留言 */
+function addComment(){
+  if(!currentUser){
+    alert("請先登入！");
+    return;
+  }
+
+  const input = document.getElementById("commentInput");
+  const text = input.value.trim();
+  if(text==="") return;
+
+  db.ref("comments").push({
+    text:text,
+    user:currentUser,
+    name:firebase.auth().currentUser.displayName,
+    time:Date.now()
+  });
+
+  input.value="";
+}
+
+/* 初始化 */
+loadImages();
+</script>
+
+</body>
+</html>
