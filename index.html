@@ -6,11 +6,10 @@
 
 <style>
 body{
-  /* 修正：直接讀取同目錄下的背景圖 */
   background-image:url('background.jpg');
   background-size:cover;
   background-position:center;
-  background-attachment: fixed; /* 讓背景固定，捲動時比較好看 */
+  background-attachment: fixed;
   font-family:Arial,sans-serif;
   text-align:center;
   color:rgb(9,115,214);
@@ -22,9 +21,8 @@ h1{
   text-shadow:2px 2px 5px rgba(0,0,0,0.7);
 }
 
-/* 管理員專區樣式 */
 #adminPanel {
-  display: none; /* 預設隱藏，登入後判斷身分顯示 */
+  display: none;
   margin: 20px auto;
   padding: 20px;
   width: 80%;
@@ -41,9 +39,16 @@ h1{
   margin:50px 0;
 }
 
+/* 圖片容器：為了放刪除按鈕 */
+.img-item {
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .gallery img{
   width:200px;
-  margin:10px;
   border-radius:8px;
   box-shadow:2px 2px 5px rgba(0,0,0,0.5);
   transition:0.3s;
@@ -51,6 +56,19 @@ h1{
 
 .gallery img:hover{
   transform:scale(1.05);
+}
+
+/* 圖片下方的刪除按鈕 */
+.del-img-btn {
+  display: none; /* 預設隱藏 */
+  margin-top: 5px;
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
 }
 
 .comment-box{
@@ -104,7 +122,7 @@ textarea{
 <h1>糰子牛奶的畫畫作品 🎨</h1>
 
 <div id="adminPanel">
-  <h3>新增畫作 (管理員專用)</h3>
+  <h3>管理員控制台 (上限 10 張)</h3>
   <input type="text" id="imgUrlInput" placeholder="貼上 GitHub 圖片原始連結" style="width:70%; padding:5px;">
   <button onclick="addImage()">新增圖片</button>
 </div>
@@ -136,50 +154,82 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-
 const db = firebase.database();
 let currentUser = null;
 const adminID = "PrQ5SswIOBWWRCAFU6pz8mTpVjp1";
 
-/* 登入 */
 function login(){
   const provider = new firebase.auth.GoogleAuthProvider();
   firebase.auth().signInWithPopup(provider)
   .then(res=>{
     currentUser = res.user.uid;
-    // 如果是管理員，顯示管理面板
     if(currentUser === adminID) {
       document.getElementById('adminPanel').style.display = 'block';
+      // 顯示圖片下方的刪除按鈕
+      const btns = document.getElementsByClassName('del-img-btn');
+      for(let b of btns) b.style.display = 'block';
     }
-    // 登入後重新載入留言，以便顯示刪除按鈕
     document.getElementById("commentList").innerHTML = "";
     loadComments();
   });
 }
 
-/* 載入圖片 */
+/* 載入圖片 (改用 .on("value") 方便即時連動刪除) */
 function loadImages(){
-  db.ref("images").on("child_added", snap=>{
-    const url = snap.val();
-    const img = document.createElement("img");
-    img.src = url;
-    document.getElementById("gallery").appendChild(img);
+  db.ref("images").on("value", snap => {
+    const gallery = document.getElementById("gallery");
+    gallery.innerHTML = ""; // 先清空，再重新繪製
+    
+    snap.forEach(child => {
+      const url = child.val();
+      const id = child.key;
+
+      const div = document.createElement("div");
+      div.className = "img-item";
+
+      const img = document.createElement("img");
+      img.src = url;
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "del-img-btn";
+      delBtn.textContent = "刪除圖片";
+      // 如果已登入管理員，直接顯示
+      if(currentUser === adminID) delBtn.style.display = "block";
+      
+      delBtn.onclick = () => {
+        if(confirm("確定要刪除這張畫嗎？")) {
+          db.ref("images/" + id).remove();
+        }
+      };
+
+      div.appendChild(img);
+      div.appendChild(delBtn);
+      gallery.appendChild(div);
+    });
   });
 }
 
-/* 管理員新增圖片 */
+/* 管理員新增圖片 (加入限制 10 張邏輯) */
 function addImage(){
   const input = document.getElementById("imgUrlInput");
   const url = input.value.trim();
   if(url === "") return;
-  
-  db.ref("images").push(url).then(() => {
-    alert("圖片已新增！");
-    input.value = "";
+
+  // 先讀取目前的數量
+  db.ref("images").once("value", snap => {
+    const count = snap.numChildren();
+    
+    if(count >= 10) {
+      alert("目前已達到 10 張上限！請先刪除舊畫作再新增。");
+    } else {
+      db.ref("images").push(url).then(() => {
+        alert("圖片已新增！");
+        input.value = "";
+      });
+    }
   });
 }
 
-/* 載入留言 */
 function loadComments(){
   db.ref("comments").on("child_added", snap=>{
     const data = snap.val();
@@ -200,13 +250,11 @@ function loadComments(){
     document.getElementById("commentList").appendChild(p);
   });
   
-  // 監聽刪除事件，即時移除畫面上的留言
   db.ref("comments").on("child_removed", snap => {
-    location.reload(); // 最簡單的方法是直接重新整理
+    location.reload(); 
   });
 }
 
-/* 新增留言 */
 function addComment(){
   if(!currentUser){
     alert("請先登入！");
@@ -225,7 +273,6 @@ function addComment(){
   input.value="";
 }
 
-/* 初始化 */
 loadImages();
 loadComments();
 </script>
