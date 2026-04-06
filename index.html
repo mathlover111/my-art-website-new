@@ -2,13 +2,15 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>我的作品集</title>
+<title>糰子牛奶的作品集</title>
 
 <style>
 body{
-  background-image:url('images/background.jpg');
+  /* 修正：直接讀取同目錄下的背景圖 */
+  background-image:url('background.jpg');
   background-size:cover;
   background-position:center;
+  background-attachment: fixed; /* 讓背景固定，捲動時比較好看 */
   font-family:Arial,sans-serif;
   text-align:center;
   color:rgb(9,115,214);
@@ -18,6 +20,18 @@ body{
 h1{
   padding-top:50px;
   text-shadow:2px 2px 5px rgba(0,0,0,0.7);
+}
+
+/* 管理員專區樣式 */
+#adminPanel {
+  display: none; /* 預設隱藏，登入後判斷身分顯示 */
+  margin: 20px auto;
+  padding: 20px;
+  width: 80%;
+  max-width: 600px;
+  border: 2px dashed #0973d6;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
 }
 
 .gallery{
@@ -87,24 +101,25 @@ textarea{
 
 <body>
 
-<h1>我的畫畫作品 🎨</h1>
+<h1>糰子牛奶的畫畫作品 🎨</h1>
 
-<!-- 圖片區（從 Firebase 讀） -->
+<div id="adminPanel">
+  <h3>新增畫作 (管理員專用)</h3>
+  <input type="text" id="imgUrlInput" placeholder="貼上 GitHub 圖片原始連結" style="width:70%; padding:5px;">
+  <button onclick="addImage()">新增圖片</button>
+</div>
+
 <div class="gallery" id="gallery"></div>
 
 <div class="comment-box">
   <h2>留言區</h2>
-
-  <textarea id="commentInput" placeholder="寫點評論吧～"></textarea>
+  <textarea id="commentInput" placeholder="寫點評論吧😉"></textarea>
   <br><br>
-
   <button onclick="addComment()">送出</button>
   <button onclick="login()">Google 登入</button>
-
   <div id="commentList"></div>
 </div>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -129,23 +144,38 @@ const adminID = "PrQ5SswIOBWWRCAFU6pz8mTpVjp1";
 /* 登入 */
 function login(){
   const provider = new firebase.auth.GoogleAuthProvider();
-
   firebase.auth().signInWithPopup(provider)
   .then(res=>{
     currentUser = res.user.uid;
+    // 如果是管理員，顯示管理面板
+    if(currentUser === adminID) {
+      document.getElementById('adminPanel').style.display = 'block';
+    }
+    // 登入後重新載入留言，以便顯示刪除按鈕
+    document.getElementById("commentList").innerHTML = "";
     loadComments();
   });
 }
 
-/* 載入圖片（來自 Firebase → 實際圖片在 GitHub） */
+/* 載入圖片 */
 function loadImages(){
   db.ref("images").on("child_added", snap=>{
     const url = snap.val();
-
     const img = document.createElement("img");
     img.src = url;
-
     document.getElementById("gallery").appendChild(img);
+  });
+}
+
+/* 管理員新增圖片 */
+function addImage(){
+  const input = document.getElementById("imgUrlInput");
+  const url = input.value.trim();
+  if(url === "") return;
+  
+  db.ref("images").push(url).then(() => {
+    alert("圖片已新增！");
+    input.value = "";
   });
 }
 
@@ -154,16 +184,9 @@ function loadComments(){
   db.ref("comments").on("child_added", snap=>{
     const data = snap.val();
     const id = snap.key;
-
     const p = document.createElement("p");
-
     const date = new Date(data.time);
-    const timeText =
-      date.getFullYear()+"/"+
-      (date.getMonth()+1)+"/"+
-      date.getDate()+" "+
-      date.getHours()+":"+
-      date.getMinutes();
+    const timeText = date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate()+" "+date.getHours()+":"+date.getMinutes();
 
     p.textContent = data.name + "：" + data.text + " ("+timeText+")";
 
@@ -174,8 +197,12 @@ function loadComments(){
       btn.onclick = ()=> db.ref("comments/"+id).remove();
       p.appendChild(btn);
     }
-
     document.getElementById("commentList").appendChild(p);
+  });
+  
+  // 監聽刪除事件，即時移除畫面上的留言
+  db.ref("comments").on("child_removed", snap => {
+    location.reload(); // 最簡單的方法是直接重新整理
   });
 }
 
@@ -185,7 +212,6 @@ function addComment(){
     alert("請先登入！");
     return;
   }
-
   const input = document.getElementById("commentInput");
   const text = input.value.trim();
   if(text==="") return;
@@ -196,12 +222,12 @@ function addComment(){
     name:firebase.auth().currentUser.displayName,
     time:Date.now()
   });
-
   input.value="";
 }
 
 /* 初始化 */
 loadImages();
+loadComments();
 </script>
 
 </body>
