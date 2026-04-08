@@ -23,3 +23,21 @@ v3.0 (身份驗證版)：導入 Google OAuth 與管理員權限邏輯。
 前端：HTML5, CSS3 (Transition, Flexbox), JavaScript (Vanilla ES6)
 後端服務：Firebase Realtime Database, Firebase Authentication
 部署：GitHub Pages
+
+針對使用者實測回饋，我進行了兩大關鍵的技術調整： 
+
+1. 圖片縮放 
+問題描述：原先圖片固定寬度，導致在手機端瀏覽時，圖片會超出螢幕範圍。
+
+解決方案：導入 CSS Media Queries 與 Viewport Units (vw)。
+
+2. 異步監聽優化：解決刪除後登入失效問題
+問題描述：舊版本在刪除留言後會執行 location.reload()，強制重新整理導致使用者的 Google 登入狀態暫時遺失。
+
+解決方案：
+
+捨棄重整網頁，改用 Firebase 的 .on("child_removed") 監聽器。
+
+透過 JavaScript DOM 操作 (element.remove()) 直接從前端移除該則留言節點。
+
+成果：在刪除內容的同時，使用者能維持穩定的登入狀態，大幅提升操作流暢度。
