@@ -47,18 +47,46 @@ h1 {
   align-items: center;
 }
 
-/* 🖼️ 解決水豚太大的關鍵：使用 max-width 確保在手機上自動縮放 */
 .gallery img {
   width: 220px;
-  max-width: 42vw; /* 在手機上寬度會自動調整為螢幕的 42% */
+  max-width: 42vw;
   height: auto;
   border-radius: 8px;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
   transition: 0.3s;
+  cursor: pointer; /* 滑鼠移上去變成手指，提示可點擊 */
 }
 
 .gallery img:hover {
   transform: scale(1.05);
+}
+
+/* ✨ 新增：圖片放大遮罩層 (Lightbox) */
+#imageModal {
+  display: none; /* 預設隱藏 */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9); /* 黑色半透明背景 */
+  justify-content: center;
+  align-items: center;
+  cursor: zoom-out;
+}
+
+#modalImg {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 5px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+  animation: zoomIn 0.3s; /* 增加一個彈出動畫 */
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .del-img-btn {
@@ -73,71 +101,27 @@ h1 {
   font-size: 12px;
 }
 
-/* 💬 留言區調整：手機上佔比調大 */
-.comment-box {
-  margin: 30px auto 100px; /* 底部加空隙防止被留言清單擋住 */
-  width: 90%;
-  max-width: 800px;
-}
-
-textarea {
-  width: 100%;
-  height: 80px;
-  border-radius: 5px;
-  padding: 10px;
-  box-sizing: border-box; /* 防止 padding 撐開寬度 */
-}
-
-/* 📱 側邊留言清單：手機版縮小顯示 */
+/* 留言區相關樣式維持不變... */
+.comment-box { margin: 30px auto 100px; width: 90%; max-width: 800px; }
+textarea { width: 100%; height: 80px; border-radius: 5px; padding: 10px; box-sizing: border-box; }
 #commentList {
-  position: fixed;
-  bottom: 20px;
-  left: 15px;
-  width: 250px;
-  max-height: 250px;
-  overflow-y: auto;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  text-align: left;
+  position: fixed; bottom: 20px; left: 15px; width: 250px; max-height: 250px;
+  overflow-y: auto; background: rgba(255, 255, 255, 0.95); padding: 10px;
+  border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2); text-align: left;
 }
-
-@media (max-width: 600px) {
-  #commentList {
-    width: 180px; /* 手機上寬度縮小，避免擋住畫面 */
-    font-size: 12px;
-  }
-}
-
-#commentList p {
-  background: white;
-  padding: 8px;
-  margin: 6px 0;
-  border-radius: 5px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
-}
-
-.delete-btn {
-  background: #ff4444;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 2px 6px;
-  cursor: pointer;
-  margin-left: 5px;
-  flex-shrink: 0;
-}
+@media (max-width: 600px) { #commentList { width: 180px; font-size: 12px; } }
+#commentList p { background: white; padding: 8px; margin: 6px 0; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.delete-btn { background: #ff4444; color: white; border: none; border-radius: 4px; padding: 2px 6px; cursor: pointer; margin-left: 5px; }
 </style>
 </head>
 
 <body>
 
 <h1>糰子牛奶的畫畫作品 🎨</h1>
+
+<div id="imageModal" onclick="this.style.display='none'">
+  <img id="modalImg" src="">
+</div>
 
 <div id="adminPanel">
   <h3>管理員控制台 (上限 10 張)</h3>
@@ -161,6 +145,7 @@ textarea {
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
 <script>
+// Firebase 設定維持不變
 const firebaseConfig = {
   apiKey: "AIzaSyCstAO_LlkU9hm1L2-1R1k8KpvPcnDuULI",
   authDomain: "myprogram-476fd.firebaseapp.com",
@@ -176,20 +161,17 @@ const db = firebase.database();
 let currentUser = null;
 const adminID = "PrQ5SswIOBWWRCAFU6pz8mTpVjp1";
 
-// 監聽登入狀態改變 (比單次 login 更好)
+// 監聽登入
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
     currentUser = user.uid;
     if(currentUser === adminID) {
       document.getElementById('adminPanel').style.display = 'block';
-      const btns = document.getElementsByClassName('del-img-btn');
-      for(let b of btns) b.style.display = 'block';
     }
   } else {
     currentUser = null;
     document.getElementById('adminPanel').style.display = 'none';
   }
-  // 登入狀態改變後重新刷一下留言列表的刪除按鈕
   document.getElementById("commentList").innerHTML = "";
   loadComments();
 });
@@ -199,6 +181,7 @@ function login(){
   firebase.auth().signInWithPopup(provider).catch(err => alert("登入失敗: " + err.message));
 }
 
+// ✨ 修改：在生成圖片時加入點擊放大功能
 function loadImages(){
   db.ref("images").on("value", snap => {
     const gallery = document.getElementById("gallery");
@@ -208,13 +191,27 @@ function loadImages(){
       const id = child.key;
       const div = document.createElement("div");
       div.className = "img-item";
+      
       const img = document.createElement("img");
       img.src = url;
+      
+      // 點擊圖片顯示 Modal
+      img.onclick = () => {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImg');
+        modal.style.display = "flex";
+        modalImg.src = url;
+      };
+
       const delBtn = document.createElement("button");
       delBtn.className = "del-img-btn";
       delBtn.textContent = "刪除圖片";
       if(currentUser === adminID) delBtn.style.display = "block";
-      delBtn.onclick = () => { if(confirm("確定刪除？")) db.ref("images/" + id).remove(); };
+      delBtn.onclick = (e) => { 
+        e.stopPropagation(); // 防止觸發圖片點擊放大
+        if(confirm("確定刪除？")) db.ref("images/" + id).remove(); 
+      };
+
       div.appendChild(img);
       div.appendChild(delBtn);
       gallery.appendChild(div);
@@ -232,24 +229,17 @@ function addImage(){
   });
 }
 
-//  關鍵改進：移除 location.reload()，改用 DOM ID 操作
 function loadComments(){
   const list = document.getElementById("commentList");
-  
-  // 監聽新增
   db.ref("comments").on("child_added", snap => {
     const data = snap.val();
     const id = snap.key;
-    if(document.getElementById("msg-" + id)) return; // 避免重複渲染
-
+    if(document.getElementById("msg-" + id)) return;
     const p = document.createElement("p");
-    p.id = "msg-" + id; // 給留言一個 ID 方便之後刪除
-
+    p.id = "msg-" + id;
     const date = new Date(data.time);
     const timeText = (date.getMonth()+1)+"/"+date.getDate()+" "+date.getHours()+":"+(date.getMinutes()<10?'0':'')+date.getMinutes();
-
     p.innerHTML = `<span><b>${data.name}</b>: ${data.text} <small>(${timeText})</small></span>`;
-
     if(data.user === currentUser || currentUser === adminID){
       const btn = document.createElement("button");
       btn.textContent = "刪";
@@ -259,8 +249,6 @@ function loadComments(){
     }
     list.appendChild(p);
   });
-
-  // 監聽刪除：直接移除對應的 DOM 節點，不重整網頁！
   db.ref("comments").on("child_removed", snap => {
     const element = document.getElementById("msg-" + snap.key);
     if(element) element.remove();
