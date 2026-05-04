@@ -61,7 +61,7 @@ h1 {
   transform: scale(1.05);
 }
 
-/* ✨ 新增：圖片放大遮罩層 (Lightbox) */
+
 #imageModal {
   display: none; /* 預設隱藏 */
   position: fixed;
@@ -101,7 +101,7 @@ h1 {
   font-size: 12px;
 }
 
-/* 留言區相關樣式維持不變... */
+
 .comment-box { margin: 30px auto 100px; width: 90%; max-width: 800px; }
 textarea { width: 100%; height: 80px; border-radius: 5px; padding: 10px; box-sizing: border-box; }
 #commentList {
@@ -181,7 +181,7 @@ function login(){
   firebase.auth().signInWithPopup(provider).catch(err => alert("登入失敗: " + err.message));
 }
 
-// ✨ 修改：在生成圖片時加入點擊放大功能
+// 修改：在生成圖片時加入點擊放大功能
 function loadImages(){
   db.ref("images").on("value", snap => {
     const gallery = document.getElementById("gallery");
