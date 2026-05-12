@@ -6,108 +6,108 @@
 
 <style>
 body {
-  background-image: url('background.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  font-family: Arial, sans-serif;
-  text-align: center;
-  color: rgb(9, 115, 214);
-  margin: 0;
+  background-image: url('background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  color: rgb(9, 115, 214);
+  margin: 0;
 }
 
 h1 {
-  padding-top: 50px;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+  padding-top: 50px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
 }
 
 /* 管理員面板 */
 #adminPanel {
-  display: none;
-  margin: 20px auto;
-  padding: 20px;
-  width: 90%;
-  max-width: 600px;
-  border: 2px dashed #0973d6;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 10px;
+  display: none;
+  margin: 20px auto;
+  padding: 20px;
+  width: 90%;
+  max-width: 600px;
+  border: 2px dashed #0973d6;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
 }
 
 .gallery {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin: 30px 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 30px 0;
 }
 
 .img-item {
-  margin: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .gallery img {
-  width: 220px;
-  max-width: 42vw;
-  height: auto;
-  border-radius: 8px;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
-  transition: 0.3s;
-  cursor: pointer; /* 滑鼠移上去變成手指，提示可點擊 */
+  width: 220px;
+  max-width: 42vw;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+  transition: 0.3s;
+  cursor: pointer; /* 滑鼠移上去變成手指，提示可點擊 */
 }
 
 .gallery img:hover {
-  transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 
 #imageModal {
-  display: none; /* 預設隱藏 */
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.9); /* 黑色半透明背景 */
-  justify-content: center;
-  align-items: center;
-  cursor: zoom-out;
+  display: none; /* 預設隱藏 */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9); /* 黑色半透明背景 */
+  justify-content: center;
+  align-items: center;
+  cursor: zoom-out;
 }
 
 #modalImg {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 5px;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-  animation: zoomIn 0.3s; /* 增加一個彈出動畫 */
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 5px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+  animation: zoomIn 0.3s; /* 增加一個彈出動畫 */
 }
 
 @keyframes zoomIn {
-  from { transform: scale(0.7); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .del-img-btn {
-  display: none;
-  margin-top: 5px;
-  background: #ff4d4d;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 12px;
+  display: none;
+  margin-top: 5px;
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
 }
 
 
 .comment-box { margin: 30px auto 100px; width: 90%; max-width: 800px; }
 textarea { width: 100%; height: 80px; border-radius: 5px; padding: 10px; box-sizing: border-box; }
 #commentList {
-  position: fixed; bottom: 20px; left: 15px; width: 250px; max-height: 250px;
-  overflow-y: auto; background: rgba(255, 255, 255, 0.95); padding: 10px;
-  border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2); text-align: left;
+  position: fixed; bottom: 20px; left: 15px; width: 250px; max-height: 250px;
+  overflow-y: auto; background: rgba(255, 255, 255, 0.95); padding: 10px;
+  border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2); text-align: left;
 }
 @media (max-width: 600px) { #commentList { width: 180px; font-size: 12px; } }
 #commentList p { background: white; padding: 8px; margin: 6px 0; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
@@ -120,40 +120,40 @@ textarea { width: 100%; height: 80px; border-radius: 5px; padding: 10px; box-siz
 <h1>糰子牛奶的畫畫作品 🎨</h1>
 
 <div id="imageModal" onclick="this.style.display='none'">
-  <img id="modalImg" src="">
+  <img id="modalImg" src="">
 </div>
 
 <div id="adminPanel">
-  <h3>管理員控制台 (上限 10 張)</h3>
-  <input type="text" id="imgUrlInput" placeholder="貼上圖片原始連結" style="width:70%; padding:5px;">
-  <button onclick="addImage()">新增圖片</button>
+  <h3>管理員控制台 (上限 10 張)</h3>
+  <input type="text" id="imgUrlInput" placeholder="貼上圖片原始連結" style="width:70%; padding:5px;">
+  <button onclick="addImage()">新增圖片</button>
 </div>
 
 <div class="gallery" id="gallery"></div>
 
 <div class="comment-box">
-  <h2>留言區</h2>
-  <textarea id="commentInput" placeholder="來都來了，寫點評論吧😉"></textarea>
-  <br><br>
-  <button onclick="addComment()" style="padding:8px 20px;">送出</button>
-  <button onclick="login()" style="padding:8px 20px;">Google 登入</button>
-  <div id="commentList"></div>
+  <h2>留言區</h2>
+  <textarea id="commentInput" placeholder="來都來了，寫點評論吧😉"></textarea>
+  <br><br>
+  <button onclick="addComment()" style="padding:8px 20px;">送出</button>
+  <button onclick="login()" style="padding:8px 20px;">Google 登入</button>
+  <div id="commentList"></div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></scri
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
 <script>
 // Firebase 設定維持不變
 const firebaseConfig = {
-  apiKey: "AIzaSyCstAO_LlkU9hm1L2-1R1k8KpvPcnDuULI",
-  authDomain: "myprogram-476fd.firebaseapp.com",
-  databaseURL: "https://myprogram-476fd-default-rtdb.firebaseio.com",
-  projectId: "myprogram-476fd",
-  storageBucket: "myprogram-476fd.appspot.com",
-  messagingSenderId: "292155592104",
-  appId: "1:292155592104:web:45788da74aa7986b56e19d"
+  apiKey: "AIzaSyCstAO_LlkU9hm1L2-1R1k8KpvPcnDuULI",
+  authDomain: "myprogram-476fd.firebaseapp.com",
+  databaseURL: "https://myprogram-476fd-default-rtdb.firebaseio.com",
+  projectId: "myprogram-476fd",
+  storageBucket: "myprogram-476fd.appspot.com",
+  messagingSenderId: "292155592104",
+  appId: "1:292155592104:web:45788da74aa7986b56e19d"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -163,110 +163,110 @@ const adminID = "PrQ5SswIOBWWRCAFU6pz8mTpVjp1";
 
 // 監聽登入
 firebase.auth().onAuthStateChanged(user => {
-  if (user) {
-    currentUser = user.uid;
-    if(currentUser === adminID) {
-      document.getElementById('adminPanel').style.display = 'block';
-    }
-  } else {
-    currentUser = null;
-    document.getElementById('adminPanel').style.display = 'none';
-  }
-  document.getElementById("commentList").innerHTML = "";
-  loadComments();
+  if (user) {
+    currentUser = user.uid;
+    if(currentUser === adminID) {
+      document.getElementById('adminPanel').style.display = 'block';
+    }
+  } else {
+    currentUser = null;
+    document.getElementById('adminPanel').style.display = 'none';
+  }
+  document.getElementById("commentList").innerHTML = "";
+  loadComments();
 });
 
 function login(){
-  const provider = new firebase.auth.GoogleAuthProvider();
-  firebase.auth().signInWithPopup(provider).catch(err => alert("登入失敗: " + err.message));
+  const provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(provider).catch(err => alert("登入失敗: " + err.message));
 }
 
 // 修改：在生成圖片時加入點擊放大功能
 function loadImages(){
-  db.ref("images").on("value", snap => {
-    const gallery = document.getElementById("gallery");
-    gallery.innerHTML = "";
-    snap.forEach(child => {
-      const url = child.val();
-      const id = child.key;
-      const div = document.createElement("div");
-      div.className = "img-item";
-      
-      const img = document.createElement("img");
-      img.src = url;
-      
-      // 點擊圖片顯示 Modal
-      img.onclick = () => {
-        const modal = document.getElementById('imageModal');
-        const modalImg = document.getElementById('modalImg');
-        modal.style.display = "flex";
-        modalImg.src = url;
-      };
+  db.ref("images").on("value", snap => {
+    const gallery = document.getElementById("gallery");
+    gallery.innerHTML = "";
+    snap.forEach(child => {
+      const url = child.val();
+      const id = child.key;
+      const div = document.createElement("div");
+      div.className = "img-item";
+      
+      const img = document.createElement("img");
+      img.src = url;
+      
+      // 點擊圖片顯示 Modal
+      img.onclick = () => {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImg');
+        modal.style.display = "flex";
+        modalImg.src = url;
+      };
 
-      const delBtn = document.createElement("button");
-      delBtn.className = "del-img-btn";
-      delBtn.textContent = "刪除圖片";
-      if(currentUser === adminID) delBtn.style.display = "block";
-      delBtn.onclick = (e) => { 
-        e.stopPropagation(); // 防止觸發圖片點擊放大
-        if(confirm("確定刪除？")) db.ref("images/" + id).remove(); 
-      };
+      const delBtn = document.createElement("button");
+      delBtn.className = "del-img-btn";
+      delBtn.textContent = "刪除圖片";
+      if(currentUser === adminID) delBtn.style.display = "block";
+      delBtn.onclick = (e) => { 
+        e.stopPropagation(); // 防止觸發圖片點擊放大
+        if(confirm("確定刪除？")) db.ref("images/" + id).remove(); 
+      };
 
-      div.appendChild(img);
-      div.appendChild(delBtn);
-      gallery.appendChild(div);
-    });
-  });
+      div.appendChild(img);
+      div.appendChild(delBtn);
+      gallery.appendChild(div);
+    });
+  });
 }
 
 function addImage(){
-  const input = document.getElementById("imgUrlInput");
-  const url = input.value.trim();
-  if(!url || currentUser !== adminID) return;
-  db.ref("images").once("value", snap => {
-    if(snap.numChildren() >= 10) return alert("已達 10 張上限");
-    db.ref("images").push(url).then(() => { input.value = ""; alert("新增成功"); });
-  });
+  const input = document.getElementById("imgUrlInput");
+  const url = input.value.trim();
+  if(!url || currentUser !== adminID) return;
+  db.ref("images").once("value", snap => {
+    if(snap.numChildren() >= 10) return alert("已達 10 張上限");
+    db.ref("images").push(url).then(() => { input.value = ""; alert("新增成功"); });
+  });
 }
 
 function loadComments(){
-  const list = document.getElementById("commentList");
-  db.ref("comments").on("child_added", snap => {
-    const data = snap.val();
-    const id = snap.key;
-    if(document.getElementById("msg-" + id)) return;
-    const p = document.createElement("p");
-    p.id = "msg-" + id;
-    const date = new Date(data.time);
-    const timeText = (date.getMonth()+1)+"/"+date.getDate()+" "+date.getHours()+":"+(date.getMinutes()<10?'0':'')+date.getMinutes();
-    p.innerHTML = `<span><b>${data.name}</b>: ${data.text} <small>(${timeText})</small></span>`;
-    if(data.user === currentUser || currentUser === adminID){
-      const btn = document.createElement("button");
-      btn.textContent = "刪";
-      btn.className = "delete-btn";
-      btn.onclick = () => db.ref("comments/"+id).remove();
-      p.appendChild(btn);
-    }
-    list.appendChild(p);
-  });
-  db.ref("comments").on("child_removed", snap => {
-    const element = document.getElementById("msg-" + snap.key);
-    if(element) element.remove();
-  });
+  const list = document.getElementById("commentList");
+  db.ref("comments").on("child_added", snap => {
+    const data = snap.val();
+    const id = snap.key;
+    if(document.getElementById("msg-" + id)) return;
+    const p = document.createElement("p");
+    p.id = "msg-" + id;
+    const date = new Date(data.time);
+    const timeText = (date.getMonth()+1)+"/"+date.getDate()+" "+date.getHours()+":"+(date.getMinutes()<10?'0':'')+date.getMinutes();
+    p.innerHTML = `<span><b>${data.name}</b>: ${data.text} <small>(${timeText})</small></span>`;
+    if(data.user === currentUser || currentUser === adminID){
+      const btn = document.createElement("button");
+      btn.textContent = "刪";
+      btn.className = "delete-btn";
+      btn.onclick = () => db.ref("comments/"+id).remove();
+      p.appendChild(btn);
+    }
+    list.appendChild(p);
+  });
+  db.ref("comments").on("child_removed", snap => {
+    const element = document.getElementById("msg-" + snap.key);
+    if(element) element.remove();
+  });
 }
 
 function addComment(){
-  if(!currentUser) return alert("請先登入！");
-  const input = document.getElementById("commentInput");
-  const text = input.value.trim();
-  if(!text) return;
-  db.ref("comments").push({
-    text: text,
-    user: currentUser,
-    name: firebase.auth().currentUser.displayName,
-    time: Date.now()
-  });
-  input.value = "";
+  if(!currentUser) return alert("請先登入！");
+  const input = document.getElementById("commentInput");
+  const text = input.value.trim();
+  if(!text) return;
+  db.ref("comments").push({
+    text: text,
+    user: currentUser,
+    name: firebase.auth().currentUser.displayName,
+    time: Date.now()
+  });
+  input.value = "";
 }
 
 loadImages();
