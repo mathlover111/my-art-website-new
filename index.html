@@ -10,7 +10,8 @@ body {
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  font-family: Arial, sans-serif;
+  /* 只改字體：讓中文字看起來更平滑 */
+  font-family: "Microsoft JhengHei", Arial, sans-serif;
   text-align: center;
   color: rgb(9, 115, 214);
   margin: 0;
@@ -54,23 +55,22 @@ h1 {
   border-radius: 8px;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
   transition: 0.3s;
-  cursor: pointer; /* 滑鼠移上去變成手指，提示可點擊 */
+  cursor: pointer;
 }
 
 .gallery img:hover {
   transform: scale(1.05);
 }
 
-
 #imageModal {
-  display: none; /* 預設隱藏 */
+  display: none;
   position: fixed;
   z-index: 1000;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.9); /* 黑色半透明背景 */
+  background-color: rgba(0, 0, 0, 0.9);
   justify-content: center;
   align-items: center;
   cursor: zoom-out;
@@ -81,7 +81,7 @@ h1 {
   max-height: 90%;
   border-radius: 5px;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-  animation: zoomIn 0.3s; /* 增加一個彈出動畫 */
+  animation: zoomIn 0.3s;
 }
 
 @keyframes zoomIn {
@@ -101,16 +101,33 @@ h1 {
   font-size: 12px;
 }
 
-
 .comment-box { margin: 30px auto 100px; width: 90%; max-width: 800px; }
-textarea { width: 100%; height: 80px; border-radius: 5px; padding: 10px; box-sizing: border-box; }
+textarea { width: 100%; height: 80px; border-radius: 5px; padding: 10px; box-sizing: border-box; font-family: inherit; }
+
+/* 修正：留言清單不再固定在左下角，而是乖乖排在留言框下面 */
 #commentList {
-  position: fixed; bottom: 20px; left: 15px; width: 250px; max-height: 250px;
-  overflow-y: auto; background: rgba(255, 255, 255, 0.95); padding: 10px;
-  border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2); text-align: left;
+  margin: 20px auto;
+  width: 100%;
+  max-width: 600px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  text-align: left;
 }
-@media (max-width: 600px) { #commentList { width: 180px; font-size: 12px; } }
-#commentList p { background: white; padding: 8px; margin: 6px 0; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+
+#commentList p { 
+  background: white; 
+  padding: 8px; 
+  margin: 6px 0; 
+  border-radius: 5px; 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  font-size: 14px;
+  color: #333; /* 讓字體顏色在白色背景上清楚 */
+}
+
 .delete-btn { background: #ff4444; color: white; border: none; border-radius: 4px; padding: 2px 6px; cursor: pointer; margin-left: 5px; }
 </style>
 </head>
@@ -145,7 +162,6 @@ textarea { width: 100%; height: 80px; border-radius: 5px; padding: 10px; box-siz
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
 
 <script>
-// Firebase 設定維持不變
 const firebaseConfig = {
   apiKey: "AIzaSyCstAO_LlkU9hm1L2-1R1k8KpvPcnDuULI",
   authDomain: "myprogram-476fd.firebaseapp.com",
@@ -161,7 +177,6 @@ const db = firebase.database();
 let currentUser = null;
 const adminID = "PrQ5SswIOBWWRCAFU6pz8mTpVjp1";
 
-// 監聽登入
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
     currentUser = user.uid;
@@ -181,7 +196,6 @@ function login(){
   firebase.auth().signInWithPopup(provider).catch(err => alert("登入失敗: " + err.message));
 }
 
-// 修改：在生成圖片時加入點擊放大功能
 function loadImages(){
   db.ref("images").on("value", snap => {
     const gallery = document.getElementById("gallery");
@@ -195,7 +209,6 @@ function loadImages(){
       const img = document.createElement("img");
       img.src = url;
       
-      // 點擊圖片顯示 Modal
       img.onclick = () => {
         const modal = document.getElementById('imageModal');
         const modalImg = document.getElementById('modalImg');
@@ -208,7 +221,7 @@ function loadImages(){
       delBtn.textContent = "刪除圖片";
       if(currentUser === adminID) delBtn.style.display = "block";
       delBtn.onclick = (e) => { 
-        e.stopPropagation(); // 防止觸發圖片點擊放大
+        e.stopPropagation();
         if(confirm("確定刪除？")) db.ref("images/" + id).remove(); 
       };
 
