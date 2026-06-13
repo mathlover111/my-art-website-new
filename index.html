@@ -143,7 +143,7 @@ textarea { width: 100%; height: 80px; border-radius: 5px; padding: 10px; box-siz
 <div id="adminPanel">
   <h3>管理員控制台 (上限 10 張)</h3>
   <input type="text" id="imgUrlInput" placeholder="貼上圖片原始連結" style="width:70%; padding:5px;">
-  <button onclick="addImage()">新增圖片</button>
+  <button id="addImageBtn" onclick="addImage()">新增圖片</button>
 </div>
 
 <div class="gallery" id="gallery"></div>
@@ -152,7 +152,7 @@ textarea { width: 100%; height: 80px; border-radius: 5px; padding: 10px; box-siz
   <h2>留言區</h2>
   <textarea id="commentInput" placeholder="來都來了，寫點評論吧😉"></textarea>
   <br><br>
-  <button onclick="addComment()" style="padding:8px 20px;">送出</button>
+  <button id="submitCommentBtn" onclick="addComment()" style="padding:8px 20px;">送出</button>
   <button onclick="login()" style="padding:8px 20px;">Google 登入</button>
   <div id="commentList"></div>
 </div>
@@ -234,11 +234,24 @@ function loadImages(){
 
 function addImage(){
   const input = document.getElementById("imgUrlInput");
+  const btn = document.getElementById("addImageBtn");
   const url = input.value.trim();
   if(!url || currentUser !== adminID) return;
+  
+  btn.disabled = true; // 鎖定按鈕防連點
   db.ref("images").once("value", snap => {
-    if(snap.numChildren() >= 10) return alert("已達 10 張上限");
-    db.ref("images").push(url).then(() => { input.value = ""; alert("新增成功"); });
+    if(snap.numChildren() >= 10) {
+      btn.disabled = false;
+      return alert("已達 10 張上限");
+    }
+    db.ref("images").push(url).then(() => { 
+      input.value = ""; 
+      alert("新增成功"); 
+      btn.disabled = false;
+    }).catch(err => {
+      alert("新增失敗: " + err.message);
+      btn.disabled = false;
+    });
   });
 }
 
@@ -248,11 +261,29 @@ function loadComments(){
     const data = snap.val();
     const id = snap.key;
     if(document.getElementById("msg-" + id)) return;
+    
     const p = document.createElement("p");
     p.id = "msg-" + id;
+    
     const date = new Date(data.time);
     const timeText = (date.getMonth()+1)+"/"+date.getDate()+" "+date.getHours()+":"+(date.getMinutes()<10?'0':'')+date.getMinutes();
-    p.innerHTML = `<span><b>${data.name}</b>: ${data.text} <small>(${timeText})</small></span>`;
+    
+    // 避免使用 innerHTML 直接渲染使用者輸入的內容 
+    const contentSpan = document.createElement("span");
+    
+    const nameNode = document.createElement("b");
+    nameNode.textContent = data.name || "匿名使用者"; // 用 textContent 確保名字裡的 HTML 標籤不會被執行
+    
+    const textNode = document.createTextNode(`: ${data.text} `); // 用 createTextNode 確保留言內容完全是純文字
+    
+    const timeNode = document.createElement("small");
+    timeNode.textContent = `(${timeText})`;
+    
+    contentSpan.appendChild(nameNode);
+    contentSpan.appendChild(textNode);
+    contentSpan.appendChild(timeNode);
+    p.appendChild(contentSpan);
+    
     if(data.user === currentUser || currentUser === adminID){
       const btn = document.createElement("button");
       btn.textContent = "刪";
@@ -262,6 +293,7 @@ function loadComments(){
     }
     list.appendChild(p);
   });
+  
   db.ref("comments").on("child_removed", snap => {
     const element = document.getElementById("msg-" + snap.key);
     if(element) element.remove();
@@ -271,15 +303,26 @@ function loadComments(){
 function addComment(){
   if(!currentUser) return alert("請先登入！");
   const input = document.getElementById("commentInput");
+  const btn = document.getElementById("submitCommentBtn");
   const text = input.value.trim();
   if(!text) return;
+  
+  //  鎖定送出按鈕，防止連續點擊造成重複留言或洗版
+  btn.disabled = true;
+  
   db.ref("comments").push({
     text: text,
     user: currentUser,
-    name: firebase.auth().currentUser.displayName,
+    name: firebase.auth().currentUser.displayName || "Genshin Player",
     time: Date.now()
+  }).then(() => {
+    input.value = "";
+    // 1.5 秒後才解除鎖定，建立基本限流機制
+    setTimeout(() => { btn.disabled = false; }, 1500); 
+  }).catch(err => {
+    alert("留言失敗: " + err.message);
+    btn.disabled = false;
   });
-  input.value = "";
 }
 
 loadImages();
