@@ -15,72 +15,69 @@ body {
   text-align: center;
   color: rgb(9, 115, 214);
   margin: 0;
-  display: flex;
-  min-height: 100vh;
+  padding: 0;
 }
 
-/* 側邊欄樣式 */
-.sidebar {
-  width: 250px;
-  background: rgba(255, 255, 255, 0.85);
+/* 側邊欄切換按鈕（懸浮左上角） */
+.sidebar-toggle-btn {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  z-index: 1001;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
   backdrop-filter: blur(5px);
-  padding: 30px 20px;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  transition: 0.3s;
+}
+
+.sidebar-toggle-btn:hover {
+  background: rgba(9, 115, 214, 0.8);
+}
+
+/* 側邊欄：預設隱藏，使用毛玻璃質感 */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -280px; /* 預設收起來 */
+  width: 260px;
+  height: 100%;
+  background: rgba(20, 20, 20, 0.75); /* 暗色半透明 */
+  backdrop-filter: blur(10px);
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  transition: left 0.3s ease;
+  padding: 60px 20px 20px 20px;
   box-sizing: border-box;
-  flex-shrink: 0;
+  color: #fff;
+  text-align: center;
+}
+
+/* 側邊欄展開的 Class */
+.sidebar.active {
+  left: 0;
 }
 
 .avatar {
-  width: 100px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #0973d6;
-  margin-bottom: 15px;
+  border: 2px solid #0973d6;
+  margin-bottom: 10px;
 }
 
 .bio {
-  font-size: 14px;
-  color: #333;
-  margin-bottom: 20px;
-  line-height: 1.5;
-}
-
-.like-btn {
-  background: #ff4757;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: transform 0.2s, background 0.2s;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-.like-btn:hover {
-  background: #ff6b81;
-  transform: scale(1.05);
-}
-
-.like-btn:active {
-  transform: scale(0.95);
-}
-
-/* 主要內容區域 */
-.main-content {
-  flex: 1;
-  padding: 20px;
-  box-sizing: border-box;
-  overflow-y: auto;
+  font-size: 13px;
+  color: #ddd;
+  line-height: 1.6;
 }
 
 h1 {
-  padding-top: 20px;
+  padding-top: 50px;
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
 }
 
@@ -92,7 +89,7 @@ h1 {
   width: 90%;
   max-width: 600px;
   border: 2px dashed #0973d6;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.85);
   border-radius: 10px;
 }
 
@@ -104,18 +101,18 @@ h1 {
 }
 
 .img-item {
-  margin: 10px;
+  margin: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .gallery img {
-  width: 220px;       /* 固定寬度 */
-  height: 220px;      /* 固定高度圖片正方形 */
-  object-fit: cover;  /* 不會被壓扁或拉伸變形 */
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
   border-radius: 8px;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.6);
   transition: 0.3s;
   cursor: pointer;
 }
@@ -124,10 +121,29 @@ h1 {
   transform: scale(1.05);
 }
 
+/* 圖片下方單張按讚按鈕 */
+.image-like-btn {
+  margin-top: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 15px;
+  padding: 4px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #e74c3c;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+}
+
+.image-like-btn:hover {
+  transform: scale(1.1);
+}
+
 #imageModal {
   display: none;
   position: fixed;
-  z-index: 1000;
+  z-index: 2000;
   left: 0;
   top: 0;
   width: 100%;
@@ -166,7 +182,6 @@ h1 {
 .comment-box { margin: 30px auto 100px; width: 90%; max-width: 800px; }
 textarea { width: 100%; height: 80px; border-radius: 5px; padding: 10px; box-sizing: border-box; font-family: inherit; }
 
-/* 留言清單在留言框下面 */
 #commentList {
   margin: 20px auto;
   width: 100%;
@@ -191,57 +206,42 @@ textarea { width: 100%; height: 80px; border-radius: 5px; padding: 10px; box-siz
 }
 
 .delete-btn { background: #ff4444; color: white; border: none; border-radius: 4px; padding: 2px 6px; cursor: pointer; margin-left: 5px; }
-
-/* 手機版自適應調整 */
-@media (max-width: 768px) {
-  body {
-    flex-direction: column;
-  }
-  .sidebar {
-    width: 100%;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  }
-}
 </style>
 </head>
 
 <body>
 
-<!-- 左側側邊欄 -->
-<div class="sidebar">
-  <img src="https://via.placeholder.com/100" alt="頭像" class="avatar" id="authorAvatar">
-  <h3 style="margin: 5px 0; color: #0973d6;">糰子牛奶</h3>
-  <p class="bio">歡迎來到我的插畫作品集！喜歡動漫手繪與電繪創作 ✨</p>
-  
-  <button class="like-btn" onclick="addLike()">
-    ❤️ 讚 <span id="likeCount">0</span>
-  </button>
+<!-- 側邊欄開關按鈕 -->
+<button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰ 作者簡介</button>
+
+<!-- 可收納側邊欄 -->
+<div class="sidebar" id="sidebar">
+  <img src="https://via.placeholder.com/90" alt="頭像" class="avatar">
+  <h3 style="margin: 5px 0; color: #3897f0;">糰子牛奶</h3>
+  <p class="bio">歡迎來到我的插畫作品集！<br>喜歡動漫手繪與電繪創作 ✨</p>
 </div>
 
-<!-- 右側主要內容 -->
-<div class="main-content">
-  <h1>糰子牛奶的畫畫作品 🎨</h1>
+<h1>糰子牛奶的畫畫作品 🎨</h1>
 
-  <div id="imageModal" onclick="this.style.display='none'">
-    <img id="modalImg" src="">
-  </div>
+<div id="imageModal" onclick="this.style.display='none'">
+  <img id="modalImg" src="">
+</div>
 
-  <div id="adminPanel">
-    <h3>管理員控制台 (上限 10 張)</h3>
-    <input type="text" id="imgUrlInput" placeholder="貼上圖片原始連結" style="width:70%; padding:5px;">
-    <button id="addImageBtn" onclick="addImage()">新增圖片</button>
-  </div>
+<div id="adminPanel">
+  <h3>管理員控制台 (上限 10 張)</h3>
+  <input type="text" id="imgUrlInput" placeholder="貼上圖片原始連結" style="width:70%; padding:5px;">
+  <button id="addImageBtn" onclick="addImage()">新增圖片</button>
+</div>
 
-  <div class="gallery" id="gallery"></div>
+<div class="gallery" id="gallery"></div>
 
-  <div class="comment-box">
-    <h2>留言區</h2>
-    <textarea id="commentInput" placeholder="來都來了，寫點評論吧😉"></textarea>
-    <br><br>
-    <button id="submitCommentBtn" onclick="addComment()" style="padding:8px 20px;">送出</button>
-    <button onclick="login()" style="padding:8px 20px;">Google 登入</button>
-    <div id="commentList"></div>
-  </div>
+<div class="comment-box">
+  <h2>留言區</h2>
+  <textarea id="commentInput" placeholder="來都來了，寫點評論吧😉"></textarea>
+  <br><br>
+  <button id="submitCommentBtn" onclick="addComment()" style="padding:8px 20px;">送出</button>
+  <button onclick="login()" style="padding:8px 20px;">Google 登入</button>
+  <div id="commentList"></div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -263,6 +263,12 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 let currentUser = null;
 const adminID = "PrQ5SswIOBWWRCAFU6pz8mTpVjp1";
+
+/* 側邊欄開關邏輯 */
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  sidebar.classList.toggle("active");
+}
 
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
@@ -303,16 +309,35 @@ function loadImages(){
         modalImg.src = url;
       };
 
+      // 每張圖獨立的按讚按鈕
+      const likeBtn = document.createElement("button");
+      likeBtn.className = "image-like-btn";
+      likeBtn.innerHTML = `❤️ <span id="like-${id}">0</span>`;
+      likeBtn.onclick = (e) => {
+        e.stopPropagation();
+        db.ref("likes/" + id).transaction(count => (count || 0) + 1);
+      };
+
+      // 即時監聽該圖片的讚數
+      db.ref("likes/" + id).on("value", likeSnap => {
+        const countSpan = document.getElementById(`like-${id}`);
+        if(countSpan) countSpan.textContent = likeSnap.val() || 0;
+      });
+
       const delBtn = document.createElement("button");
       delBtn.className = "del-img-btn";
       delBtn.textContent = "刪除圖片";
       if(currentUser === adminID) delBtn.style.display = "block";
       delBtn.onclick = (e) => { 
         e.stopPropagation();
-        if(confirm("確定刪除？")) db.ref("images/" + id).remove(); 
+        if(confirm("確定刪除？")) {
+          db.ref("images/" + id).remove(); 
+          db.ref("likes/" + id).remove(); 
+        }
       };
 
       div.appendChild(img);
+      div.appendChild(likeBtn);
       div.appendChild(delBtn);
       gallery.appendChild(div);
     });
@@ -325,7 +350,7 @@ function addImage(){
   const url = input.value.trim();
   if(!url || currentUser !== adminID) return;
   
-  btn.disabled = true; // 鎖定按鈕防連點
+  btn.disabled = true;
   db.ref("images").once("value", snap => {
     if(snap.numChildren() >= 10) {
       btn.disabled = false;
@@ -355,14 +380,10 @@ function loadComments(){
     const date = new Date(data.time);
     const timeText = (date.getMonth()+1)+"/"+date.getDate()+" "+date.getHours()+":"+(date.getMinutes()<10?'0':'')+date.getMinutes();
     
-    // 避免使用 innerHTML 直接渲染使用者輸入的內容 
     const contentSpan = document.createElement("span");
-    
     const nameNode = document.createElement("b");
-    nameNode.textContent = data.name || "匿名使用者"; // 用 textContent 確保名字裡的 HTML 標籤不會被執行
-    
-    const textNode = document.createTextNode(`: ${data.text} `); // 用 createTextNode 確保留言內容完全是純文字
-    
+    nameNode.textContent = data.name || "匿名使用者";
+    const textNode = document.createTextNode(`: ${data.text} `);
     const timeNode = document.createElement("small");
     timeNode.textContent = `(${timeText})`;
     
@@ -394,9 +415,7 @@ function addComment(){
   const text = input.value.trim();
   if(!text) return;
   
-  // 鎖定送出按鈕，防止連續點擊造成重複留言或洗版
   btn.disabled = true;
-  
   db.ref("comments").push({
     text: text,
     user: currentUser,
@@ -404,7 +423,6 @@ function addComment(){
     time: Date.now()
   }).then(() => {
     input.value = "";
-    // 1.5 秒後才解除鎖定，建立基本限流機制
     setTimeout(() => { btn.disabled = false; }, 1500); 
   }).catch(err => {
     alert("留言失敗: " + err.message);
@@ -412,22 +430,7 @@ function addComment(){
   });
 }
 
-/* 讚數相關功能 */
-function loadLikes() {
-  db.ref("likes").on("value", snap => {
-    const count = snap.val() || 0;
-    document.getElementById("likeCount").textContent = count;
-  });
-}
-
-function addLike() {
-  db.ref("likes").transaction(currentLikes => {
-    return (currentLikes || 0) + 1;
-  });
-}
-
 loadImages();
-loadLikes();
 </script>
 </body>
 </html>
