@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <title>糰子牛奶的作品集</title>
 
+<!-- 引入現代美觀字體 Noto Sans TC -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;800&display=swap" rel="stylesheet">
+
 <style>
 body {
   background-image: url('background.jpg');
@@ -11,14 +16,14 @@ body {
   background-position: center;
   background-attachment: fixed;
 
-  font-family: "Microsoft JhengHei", Arial, sans-serif;
+  font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   text-align: center;
-  color: rgb(9, 115, 214);
+  color: #fff; /* 改為白色高對比文字 */
   margin: 0;
   padding: 0;
 }
 
-/* 側邊欄切換按鈕（懸浮左上角） */
+/* 側邊欄切換按鈕 */
 .sidebar-toggle-btn {
   position: fixed;
   top: 15px;
@@ -27,10 +32,13 @@ body {
   background: rgba(0, 0, 0, 0.6);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 8px 14px;
+  padding: 8px 16px;
   border-radius: 20px;
   cursor: pointer;
   backdrop-filter: blur(5px);
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: 1px;
   transition: 0.3s;
 }
 
@@ -38,47 +46,50 @@ body {
   background: rgba(9, 115, 214, 0.8);
 }
 
-/* 側邊欄：預設隱藏，使用毛玻璃質感 */
+/* 側邊欄（移除頭像） */
 .sidebar {
   position: fixed;
   top: 0;
-  left: -280px; /* 預設收起來 */
+  left: -280px;
   width: 260px;
   height: 100%;
-  background: rgba(20, 20, 20, 0.75); /* 暗色半透明 */
-  backdrop-filter: blur(10px);
-  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.5);
+  background: rgba(15, 15, 15, 0.8);
+  backdrop-filter: blur(12px);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
   z-index: 1000;
   transition: left 0.3s ease;
-  padding: 60px 20px 20px 20px;
+  padding: 80px 20px 20px 20px;
   box-sizing: border-box;
   color: #fff;
   text-align: center;
 }
 
-/* 側邊欄展開的 Class */
 .sidebar.active {
   left: 0;
 }
 
-.avatar {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #0973d6;
-  margin-bottom: 10px;
+.sidebar h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #4bacff;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
 }
 
 .bio {
-  font-size: 13px;
+  font-size: 14px;
   color: #ddd;
-  line-height: 1.6;
+  line-height: 1.8;
+  font-weight: 400;
 }
 
 h1 {
   padding-top: 50px;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #ffffff;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(9, 115, 214, 0.6);
 }
 
 /* 管理員面板 */
@@ -88,9 +99,17 @@ h1 {
   padding: 20px;
   width: 90%;
   max-width: 600px;
-  border: 2px dashed #0973d6;
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  color: #fff;
+}
+
+#adminPanel h3 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #4bacff;
 }
 
 .gallery {
@@ -111,33 +130,36 @@ h1 {
   width: 220px;
   height: 220px;
   object-fit: cover;
-  border-radius: 8px;
-  box-shadow: 2px 2px 8px rgba(0,0,0,0.6);
-  transition: 0.3s;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
 }
 
 .gallery img:hover {
-  transform: scale(1.05);
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.7);
 }
 
-/* 圖片下方單張按讚按鈕 */
+/* 圖片下方讚數按鈕 */
 .image-like-btn {
-  margin-top: 8px;
+  margin-top: 10px;
   background: rgba(255, 255, 255, 0.9);
   border: none;
-  border-radius: 15px;
-  padding: 4px 12px;
+  border-radius: 20px;
+  padding: 6px 14px;
   font-size: 13px;
+  font-family: inherit;
+  font-weight: 600;
   cursor: pointer;
   color: #e74c3c;
-  font-weight: bold;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  transition: transform 0.2s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transition: transform 0.2s, background 0.2s;
 }
 
 .image-like-btn:hover {
   transform: scale(1.1);
+  background: #ffffff;
 }
 
 #imageModal {
@@ -157,8 +179,8 @@ h1 {
 #modalImg {
   max-width: 90%;
   max-height: 90%;
-  border-radius: 5px;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
   animation: zoomIn 0.3s;
 }
 
@@ -169,43 +191,82 @@ h1 {
 
 .del-img-btn {
   display: none;
-  margin-top: 5px;
+  margin-top: 8px;
   background: #ff4d4d;
   color: white;
   border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
+  padding: 5px 12px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 12px;
+  font-family: inherit;
 }
 
-.comment-box { margin: 30px auto 100px; width: 90%; max-width: 800px; }
-textarea { width: 100%; height: 80px; border-radius: 5px; padding: 10px; box-sizing: border-box; font-family: inherit; }
+.comment-box { 
+  margin: 40px auto 100px; 
+  width: 90%; 
+  max-width: 800px; 
+}
+
+.comment-box h2 {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+
+textarea { 
+  width: 100%; 
+  height: 90px; 
+  border-radius: 8px; 
+  padding: 12px; 
+  box-sizing: border-box; 
+  font-family: inherit; 
+  font-size: 14px;
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255, 255, 255, 0.95);
+  outline: none;
+}
+
+/* 按鈕美化 */
+button {
+  font-family: inherit;
+  font-weight: 600;
+}
+
+#submitCommentBtn, .comment-box button {
+  padding: 8px 22px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
 
 #commentList {
   margin: 20px auto;
   width: 100%;
   max-width: 600px;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
   text-align: left;
 }
 
 #commentList p { 
-  background: white; 
-  padding: 8px; 
+  background: #f8f9fa; 
+  padding: 10px; 
   margin: 6px 0; 
-  border-radius: 5px; 
+  border-radius: 6px; 
   display: flex; 
   justify-content: space-between; 
   align-items: center; 
   font-size: 14px;
-  color: #333; 
+  color: #222; 
 }
 
-.delete-btn { background: #ff4444; color: white; border: none; border-radius: 4px; padding: 2px 6px; cursor: pointer; margin-left: 5px; }
+.delete-btn { background: #ff4444; color: white; border: none; border-radius: 4px; padding: 3px 8px; cursor: pointer; margin-left: 5px; }
 </style>
 </head>
 
@@ -214,10 +275,9 @@ textarea { width: 100%; height: 80px; border-radius: 5px; padding: 10px; box-siz
 <!-- 側邊欄開關按鈕 -->
 <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰ 作者簡介</button>
 
-<!-- 可收納側邊欄 -->
+<!-- 無頭像側邊欄 -->
 <div class="sidebar" id="sidebar">
-  <img src="https://via.placeholder.com/90" alt="頭像" class="avatar">
-  <h3 style="margin: 5px 0; color: #3897f0;">糰子牛奶</h3>
+  <h3>糰子牛奶</h3>
   <p class="bio">歡迎來到我的插畫作品集！<br>喜歡動漫手繪與電繪創作 ✨</p>
 </div>
 
@@ -229,8 +289,8 @@ textarea { width: 100%; height: 80px; border-radius: 5px; padding: 10px; box-siz
 
 <div id="adminPanel">
   <h3>管理員控制台 (上限 10 張)</h3>
-  <input type="text" id="imgUrlInput" placeholder="貼上圖片原始連結" style="width:70%; padding:5px;">
-  <button id="addImageBtn" onclick="addImage()">新增圖片</button>
+  <input type="text" id="imgUrlInput" placeholder="貼上圖片原始連結" style="width:70%; padding:6px; border-radius:4px; border:none;">
+  <button id="addImageBtn" onclick="addImage()" style="padding:6px 12px;">新增圖片</button>
 </div>
 
 <div class="gallery" id="gallery"></div>
@@ -239,8 +299,8 @@ textarea { width: 100%; height: 80px; border-radius: 5px; padding: 10px; box-siz
   <h2>留言區</h2>
   <textarea id="commentInput" placeholder="來都來了，寫點評論吧😉"></textarea>
   <br><br>
-  <button id="submitCommentBtn" onclick="addComment()" style="padding:8px 20px;">送出</button>
-  <button onclick="login()" style="padding:8px 20px;">Google 登入</button>
+  <button id="submitCommentBtn" onclick="addComment()" style="background:#0973d6; color:white;">送出</button>
+  <button onclick="login()" style="background:#444; color:white; margin-left: 10px;">Google 登入</button>
   <div id="commentList"></div>
 </div>
 
@@ -264,7 +324,6 @@ const db = firebase.database();
 let currentUser = null;
 const adminID = "PrQ5SswIOBWWRCAFU6pz8mTpVjp1";
 
-/* 側邊欄開關邏輯 */
 function toggleSidebar() {
   const sidebar = document.getElementById("sidebar");
   sidebar.classList.toggle("active");
@@ -309,7 +368,6 @@ function loadImages(){
         modalImg.src = url;
       };
 
-      // 每張圖獨立的按讚按鈕
       const likeBtn = document.createElement("button");
       likeBtn.className = "image-like-btn";
       likeBtn.innerHTML = `❤️ <span id="like-${id}">0</span>`;
@@ -318,7 +376,6 @@ function loadImages(){
         db.ref("likes/" + id).transaction(count => (count || 0) + 1);
       };
 
-      // 即時監聽該圖片的讚數
       db.ref("likes/" + id).on("value", likeSnap => {
         const countSpan = document.getElementById(`like-${id}`);
         if(countSpan) countSpan.textContent = likeSnap.val() || 0;
@@ -385,7 +442,8 @@ function loadComments(){
     nameNode.textContent = data.name || "匿名使用者";
     const textNode = document.createTextNode(`: ${data.text} `);
     const timeNode = document.createElement("small");
-    timeNode.textContent = `(${timeText})`;
+    timeNode.style.color = "#777";
+    timeNode.textContent = ` (${timeText})`;
     
     contentSpan.appendChild(nameNode);
     contentSpan.appendChild(textNode);
@@ -394,7 +452,7 @@ function loadComments(){
     
     if(data.user === currentUser || currentUser === adminID){
       const btn = document.createElement("button");
-      btn.textContent = "刪";
+      btn.textContent = "刪除";
       btn.className = "delete-btn";
       btn.onclick = () => db.ref("comments/"+id).remove();
       p.appendChild(btn);
