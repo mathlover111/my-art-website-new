@@ -284,13 +284,13 @@ h1 {
 <!-- 左側選單（簡介 + 留言區） -->
 <div class="sidebar" id="sidebar">
   <h3>糰子牛奶</h3>
-  <p class="bio">看我的插畫作品集<br>雖然不太會畫就是了<br>目前都是臨摹而已<br>無任何商業行為</p>
+  <p class="bio">插畫作品集<br>雖然不太會畫就是了😞<br>目前都是臨摹<br>## 無任何商業行為</p>
 
   <div class="sidebar-divider"></div>
 
   <div class="sidebar-comment-area">
     <h4>留言區 ✍️</h4>
-    <textarea id="commentInput" placeholder="寫點評論吧..."></textarea>
+    <textarea id="commentInput" placeholder="留言啊啊啊..."></textarea>
     <div class="comment-btn-group">
       <button id="submitCommentBtn" onclick="addComment()">送出</button>
       <button class="login-btn" onclick="login()">Google 登入</button>
@@ -299,7 +299,7 @@ h1 {
   </div>
 </div>
 
-<h1>糰子牛奶的畫畫作品 🎨</h1>
+<h1>糰子牛奶的畫畫作品🖌️</h1>
 
 <div id="imageModal" onclick="this.style.display='none'">
   <img id="modalImg" src="">
@@ -375,7 +375,7 @@ function loadImages(){
 
       const likeBtn = document.createElement("button");
       likeBtn.className = "image-like-btn";
-      likeBtn.innerHTML = `❤️ <span id="like-${id}">0</span>`;
+      likeBtn.innerHTML = `♥︎ <span id="like-${id}">0</span>`;
       likeBtn.onclick = (e) => {
         e.stopPropagation();
         db.ref("likes/" + id).transaction(count => (count || 0) + 1);
